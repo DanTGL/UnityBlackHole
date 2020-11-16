@@ -2,8 +2,8 @@
 float SDFBlackHole(float3 worldPos, inout Ray ray, float radius) {
     float3 heading = worldPos - ray.origin;
     float dist = length(heading);
-    float3 futureHeading = 2 * heading / dist;
-    ray.direction = ray.direction + futureHeading;
+    float deflection = 2 * radius / dist;
+    ray.direction = lerp(ray.direction, normalize(heading), deflection);
 
     return dist - radius;
 }
