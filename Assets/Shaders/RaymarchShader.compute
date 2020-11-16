@@ -13,6 +13,7 @@ static const float PI = 3.14159265f;
 #define SPHERE 1
 #define CUBE 2
 #define CYLINDER 3
+#define BLACK_HOLE 4
 
 struct Object {
     int shape;
@@ -54,34 +55,37 @@ Ray CreateCameraRay(float2 uv) {
 #include "./Transform.cginc"
 #include "./DistanceFunctions.cginc"
 
-float SDFScene(inout float3 rayPos, Object obj) {
+float SDFScene(inout Ray ray, Object obj) {
     switch(obj.shape) {
         case SPHERE:
-            return SDFSphere(obj.worldPos, rayPos, obj.size.x);
+            return SDFSphere(obj.worldPos, ray.origin, obj.size.x);
         case CUBE:
-            return SDFCuboid(obj.worldPos, rayPos, obj.size);
+            return SDFCuboid(obj.worldPos, ray.origin, obj.size);
         case CYLINDER:
-            return SDFCylinder(obj.worldPos, rayPos, obj.size.y, obj.size.x);
+            return SDFCylinder(obj.worldPos, ray.origin, obj.size.y, obj.size.x);
+        case BLACK_HOLE:
+            return SDFBlackHole(obj.worldPos, ray, obj.size.x);
+
         default:
             return MAX_DIST;
     }
 }
 
 float4 raymarch(Ray ray) {
-    float3 rayPos = ray.origin;
     for (int step = 0; step < MAX_STEPS; step++) {
         float dist = MAX_DIST;
 
         for (int i = 0; i < _numShapes; i++) {
             Object obj = dataBuffer[i];
-            dist = min(SDFScene(rayPos, obj), dist);
+            
+            dist = min(SDFScene(ray, obj), dist);
 
             if (dist < EPSILON) {
                 return obj.surfaceColor;
             }
         }
 
-        rayPos += dist * ray.direction;
+        ray.origin += dist * ray.direction;
     }
 
     return float4(ray.direction * 0.75f, 1.0f);
