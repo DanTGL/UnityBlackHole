@@ -9,7 +9,8 @@ public class RaymarchShape : MonoBehaviour {
         SPHERE,
         CUBE,
         CYLINDER,
-        BLACK_HOLE
+        BLACK_HOLE,
+        DISK
     }
 
     [SerializeField]

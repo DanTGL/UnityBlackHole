@@ -14,6 +14,7 @@ static const float PI = 3.14159265f;
 #define CUBE 2
 #define CYLINDER 3
 #define BLACK_HOLE 4
+#define DISK 5
 
 struct Object {
     int shape;
@@ -65,7 +66,8 @@ float SDFScene(inout Ray ray, Object obj) {
             return SDFCylinder(obj.worldPos, ray.origin, obj.size.y, obj.size.x);
         case BLACK_HOLE:
             return SDFBlackHole(obj.worldPos, ray, obj.size.x);
-
+        case DISK:
+            return SDFDisk(obj.worldPos, ray.origin, obj.size);
         default:
             return MAX_DIST;
     }

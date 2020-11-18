@@ -1,3 +1,5 @@
+float SDFSphere(float3 worldPos, float3 rayPos, float radius);
+float SDFCylinder(float3 worldPos, float3 rayPos, float radius, float height);
 
 float SDFBlackHole(float3 worldPos, inout Ray ray, float radius) {
     float3 heading = worldPos - ray.origin;
@@ -6,6 +8,10 @@ float SDFBlackHole(float3 worldPos, inout Ray ray, float radius) {
     ray.direction = lerp(ray.direction, normalize(heading), deflection);
 
     return dist - radius;
+}
+
+float SDFDisk(float3 worldPos, float3 rayPos, float3 size) {
+    return max(SDFCylinder(worldPos, rayPos, size.x, size.y), SDFSphere(worldPos, rayPos, size.z) * -1);
 }
 
 // The MIT License
