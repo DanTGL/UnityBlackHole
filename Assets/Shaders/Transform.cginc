@@ -1,4 +1,4 @@
-float2x2 GetRotationMatrix(float angle) {
+inline float2x2 GetRotationMatrix(float angle) {
     return float2x2(cos(angle), -sin(angle),
                     sin(angle),  cos(angle));
 }
