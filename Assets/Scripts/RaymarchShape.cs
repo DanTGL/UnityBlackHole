@@ -22,6 +22,8 @@ public class RaymarchShape : MonoBehaviour {
     [SerializeField]
     private Color surfaceColor = Color.white;
 
+    private Matrix4x4 trsMatrix;
+
     public Vector3 GetPosition() {
         return transform.position;
     }
@@ -40,6 +42,16 @@ public class RaymarchShape : MonoBehaviour {
 
     public Vector3 GetRotation() {
         return transform.rotation.eulerAngles * Mathf.Deg2Rad;
+    }
+
+    public Matrix4x4 TRSMatrix {
+        get {
+            if (trsMatrix == null) {
+                trsMatrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+            }
+
+            return trsMatrix;
+        }
     }
 
 }
