@@ -36,8 +36,8 @@ public class RaymarchShape : MonoBehaviour {
         return surfaceColor;
     }
 
-    public Vector3 GetSize() {
-        return Vector3.Scale(size, transform.localScale);
+    public Vector2 GetSize() {
+        return size;
     }
 
     public Vector3 GetRotation() {
@@ -46,11 +46,7 @@ public class RaymarchShape : MonoBehaviour {
 
     public Matrix4x4 TRSMatrix {
         get {
-            if (trsMatrix == null) {
-                trsMatrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-            }
-
-            return trsMatrix;
+            return Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
         }
     }
 

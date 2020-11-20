@@ -1,17 +1,17 @@
 float SDFSphere(float3 worldPos, float3 rayPos, float radius);
-float SDFCylinder(float3 worldPos, float3 rayPos, float radius, float height);
+float SDFCylinder(float3 worldPos, float3 rayPos);
 
-float SDFBlackHole(float3 worldPos, inout Ray ray, float radius) {
-    float3 heading = worldPos - ray.origin;
+float SDFBlackHole(float3 worldPos, float3 rayPos, inout Ray ray) {
+    float3 heading = worldPos - rayPos;
     float dist = length(heading);
-    float deflection = 2 * radius / dist;
+    float deflection = 2 * 1.0f / dist;
     ray.direction = lerp(ray.direction, normalize(heading), deflection);
 
-    return dist - radius;
+    return dist - 1.0f;
 }
 
-float SDFDisk(float3 worldPos, float3 rayPos, float3 size) {
-    return max(SDFCylinder(worldPos, rayPos, size.x, size.y), SDFSphere(worldPos, rayPos, size.z) * -1);
+float SDFDisk(float3 worldPos, float3 rayPos) {
+    return max(SDFCylinder(worldPos, rayPos), (SDFSphere(worldPos, rayPos, 0.5f)) * -1);
 }
 
 // The MIT License
@@ -32,13 +32,13 @@ float SDFSphere(float3 worldPos, float3 rayPos, float radius) {
     return length(worldPos - rayPos) - radius;
 }
 
-float SDFCuboid(float3 worldPos, float3 rayPos, float3 size) {
-    float3 offset = abs(worldPos - rayPos) - size;
+float SDFCuboid(float3 worldPos, float3 rayPos) {
+    float3 offset = abs(worldPos - rayPos) - float3(1.0f, 1.0f, 1.0f);
 
     return length(max(offset, 0.0)) + min(max(offset.x, max(offset.y, offset.z)), 0.0);
 }
 
-float SDFCylinder(float3 worldPos, float3 rayPos, float height, float radius) {
-    float2 d = abs(float2(length(worldPos.xz - rayPos.xz), worldPos.y - rayPos.y)) - float2(height, radius);
+float SDFCylinder(float3 worldPos, float3 rayPos) {
+    float2 d = abs(float2(length(worldPos.xz - rayPos.xz), worldPos.y - rayPos.y)) - float2(1.0f, 1.0f);
     return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
 }

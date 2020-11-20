@@ -20,13 +20,13 @@ struct Object {
     int shape;
     float3 worldPos;
     float3 size;
-    float3 rotation;
     float4 surfaceColor;
+    float4x4 trsMatrix;
 };
 
 StructuredBuffer<Object> dataBuffer;
 
-static const int MAX_STEPS = 64;
+static const int MAX_STEPS = 128;
 static const float MAX_DIST = 5;
 static const float EPSILON = 0.001f;
 
@@ -57,17 +57,19 @@ Ray CreateCameraRay(float2 uv) {
 #include "./DistanceFunctions.cginc"
 
 float SDFScene(inout Ray ray, Object obj) {
+    float3 pos = mul(obj.trsMatrix, float4(ray.origin, 1)).xyz;
+
     switch(obj.shape) {
         case SPHERE:
-            return SDFSphere(obj.worldPos, ray.origin, obj.size.x);
+            return SDFSphere(float3(0, 0, 0), pos, 1.0f);
         case CUBE:
-            return SDFCuboid(obj.worldPos, ray.origin, obj.size);
+            return SDFCuboid(float3(0, 0, 0), pos);
         case CYLINDER:
-            return SDFCylinder(obj.worldPos, ray.origin, obj.size.y, obj.size.x);
+            return SDFCylinder(float3(0, 0, 0), pos);
         case BLACK_HOLE:
-            return SDFBlackHole(obj.worldPos, ray, obj.size.x);
+            return SDFBlackHole(float3(0, 0, 0), pos, ray);
         case DISK:
-            return SDFDisk(obj.worldPos, ray.origin, obj.size);
+            return SDFDisk(float3(0, 0, 0), pos);
         default:
             return MAX_DIST;
     }
